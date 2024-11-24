@@ -16,14 +16,15 @@ class CaesarsCipher:
                     index -= len(self.code_chars)
                 result += self.code_chars[index + key]
 
-            flag_check_info = False
+            # Проверка текста на вменяемость.
+            flag_check_info = []
             for i in result.split():
-                if self.En_dict.check(i) == False:
-                    flag_check_info = False
-                    break
+                if not self.En_dict.check(i):
+                    flag_check_info.append(0)
                 else:
-                    flag_check_info = True
-            if flag_check_info == True:
+                    flag_check_info.append(1)
+            # Поправка на возможные опечатки и т.д.
+            if (flag_check_info.count(1) - flag_check_info.count(0)) >= 5:
                 return key, result
 
     def encrypt(self, info, key):
@@ -42,4 +43,11 @@ if __name__ == '__main__':
     cipher = CaesarsCipher()
     print(f'key: {cipher.decrypt(test_str)[0]}, '
           f'result: {cipher.decrypt(test_str)[1]}')
-    print(cipher.encrypt(cipher.decrypt(test_str)[1], -cipher.decrypt(test_str)[0]))
+    print(f'encrypted message: {cipher.encrypt('The vacation was a success', -63)}')
+
+    file_path = input('Введите путь для сохранения результата: ')
+
+    # Сохранение в файл 'result.txt' по заданному пути.
+    with open(file_path + 'result.txt', 'w', encoding='utf-8') as file:
+        file.write(f'key: {cipher.decrypt(string_to_be_checked)[0]}\n'
+                   f'result: {cipher.decrypt(string_to_be_checked)[1]}')
